@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata>
+    <id>hadouken.boost</id>
+    <version>$version$</version>
+    <authors>Viktor Elofsson</authors>
+    <owners>Viktor Elofsson</owners>
+    <projectUrl>https://github.com/hadouken/boost</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Binary Boost 1.57.0 package built with MSVC12.</description>
+  </metadata>
+  <files>
+    <file src="win32\**\*.*" target="win32" />
+  </files>
+</package>
