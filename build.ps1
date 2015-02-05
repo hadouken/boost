@@ -94,7 +94,7 @@ function Compile-Boost {
         cmd /c bootstrap.bat
     }
 
-    Start-Process ".\b2.exe" -ArgumentList "toolset=msvc-12.0 variant=$configuration link=shared runtime-link=shared --with-chrono --with-date_time --with-filesystem --with-regex --with-system --with-thread" -Wait -NoNewWindow
+    Start-Process ".\b2.exe" -ArgumentList "toolset=msvc-12.0 variant=$configuration link=shared runtime-link=shared --with-chrono --with-date_time --with-filesystem --with-log --with-regex --with-system --with-thread" -Wait -NoNewWindow
     
     # Required to build libtorrent with boost=system and boost-link=shared
     Start-Process ".\b2.exe" -ArgumentList "toolset=msvc-12.0 variant=$configuration link=static runtime-link=shared --with-date_time --with-thread" -Wait -NoNewWindow
@@ -115,7 +115,6 @@ function Output-Boost {
     # Copy binaries, libraries and include headers
     xcopy /y stage\lib\*.dll "$t\bin\*"
     xcopy /y stage\lib\*.lib "$t\lib\*"
-    xcopy /y boost\* "$t\include\boost\*" /E
 
     # Remove leftovers
     del stage\lib\*.*
@@ -128,6 +127,11 @@ Output-Boost  "win32" "debug"
 
 Compile-Boost "win32" "release"
 Output-Boost  "win32" "release"
+
+# Output headers. These are shared between builds as they are huge.
+# AppVeyor will not finish the build in time if debug and release gets their
+# own headers.
+xcopy /y "$BOOST_DIRECTORY\boost\*" "$OUTPUT_DIRECTORY\include\boost\*" /E
 
 # Package with NuGet
 

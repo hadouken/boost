@@ -11,6 +11,7 @@
     <description>Binary Boost 1.57.0 package built with MSVC12.</description>
   </metadata>
   <files>
+    <file src="include\**\*.*" target="include" />
     <file src="win32\**\*.*" target="win32" />
   </files>
 </package>
