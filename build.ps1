@@ -94,7 +94,7 @@ function Compile-Boost {
         cmd /c bootstrap.bat
     }
 
-    Start-Process ".\b2.exe" -ArgumentList "toolset=msvc-12.0 variant=$configuration --layout=system link=shared runtime-link=shared --with-chrono --with-date_time --with-filesystem --with-log --with-regex --with-system --with-thread" -Wait -NoNewWindow
+    Start-Process ".\b2.exe" -ArgumentList "toolset=msvc-12.0 variant=$configuration --layout=system link=shared runtime-link=shared --with-chrono --with-date_time --with-filesystem --with-log --with-python --with-regex --with-system --with-thread" -Wait -NoNewWindow
     
     # Required to build libtorrent with boost=system and boost-link=shared
     Start-Process ".\b2.exe" -ArgumentList "toolset=msvc-12.0 variant=$configuration link=static runtime-link=shared --with-date_time --with-thread" -Wait -NoNewWindow
