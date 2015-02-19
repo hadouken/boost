@@ -9,21 +9,13 @@ The following libraries are built with `link=shared` and `runtime-link=shared`,
 
  * chrono
  * date_time
- * filesystem
- * log
- * regex
  * system
- * thread
-
-The following libraries are built with `link=static` and `runtime-link=shared`
-
- * date_time
  * thread
 
 ## Building
 
 ```
-CMD> powershell -ExecutionPolicy RemoteSigned -File build.ps1
+PS> .\build.ps1
 ```
 
 This will download and compile Boost in both debug and release versions for

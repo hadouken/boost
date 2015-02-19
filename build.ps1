@@ -40,24 +40,6 @@ function Extract-File {
     [System.IO.Compression.ZipFile]::ExtractToDirectory($file, $target)
 }
 
-function Load-DevelopmentTools {
-    # Set environment variables for Visual Studio Command Prompt
-    
-    pushd "c:\Program Files (x86)\Microsoft Visual Studio 12.0\VC"
-    
-    cmd /c "vcvarsall.bat&set" |
-    foreach {
-        if ($_ -match "=") {
-            $v = $_.split("="); set-item -force -path "ENV:\$($v[0])"  -value "$($v[1])"
-        }
-    }
-    
-    popd
-}
-
-# Get our dev tools
-Load-DevelopmentTools
-
 # Create packages directory if it does not exist
 if (!(Test-Path $PACKAGES_DIRECTORY)) {
     New-Item -ItemType Directory -Path $PACKAGES_DIRECTORY | Out-Null
@@ -94,11 +76,8 @@ function Compile-Boost {
         cmd /c bootstrap.bat
     }
 
-    Start-Process ".\b2.exe" -ArgumentList "toolset=msvc-12.0 variant=$configuration --layout=system link=shared runtime-link=shared --with-chrono --with-date_time --with-filesystem --with-log --with-program_options --with-regex --with-system --with-thread" -Wait -NoNewWindow
+    Start-Process ".\b2.exe" -ArgumentList "toolset=msvc-12.0 variant=$configuration link=shared runtime-link=shared --with-date_time --with-system --with-thread" -Wait -NoNewWindow
     
-    # Required to build libtorrent with boost=system and boost-link=shared
-    Start-Process ".\b2.exe" -ArgumentList "toolset=msvc-12.0 variant=$configuration link=static runtime-link=shared --with-date_time --with-thread" -Wait -NoNewWindow
-
     popd
 }
 
@@ -108,9 +87,9 @@ function Output-Boost {
         [string]$configuration
     )
 
-    pushd $BOOST_DIRECTORY
+    Push-Location $BOOST_DIRECTORY
 
-    $t = Join-Path $OUTPUT_DIRECTORY "$platform/$configuration"
+    $t = Join-Path $OUTPUT_DIRECTORY "$platform"
 
     # Copy binaries, libraries and include headers
     xcopy /y stage\lib\*.dll "$t\bin\*"
@@ -119,7 +98,7 @@ function Output-Boost {
     # Remove leftovers
     del stage\lib\*.*
 
-    popd
+    Pop-Location
 }
 
 Compile-Boost "win32" "debug"
@@ -133,13 +112,9 @@ Output-Boost  "win32" "release"
 # own headers.
 xcopy /y "$BOOST_DIRECTORY\boost\*" "$OUTPUT_DIRECTORY\include\boost\*" /E
 
-# Output b2
-xcopy /y "$BOOST_DIRECTORY\b2.exe"  "$OUTPUT_DIRECTORY\tools\*"
-
 # Package with NuGet
-
 copy hadouken.boost.nuspec $OUTPUT_DIRECTORY
 
-pushd $OUTPUT_DIRECTORY
+Push-Location $OUTPUT_DIRECTORY
 Start-Process "$NUGET_TOOL" -ArgumentList "pack hadouken.boost.nuspec -Properties version=$VERSION" -Wait -NoNewWindow
-popd
+Pop-Location

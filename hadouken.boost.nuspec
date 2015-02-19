@@ -12,7 +12,6 @@
   </metadata>
   <files>
     <file src="include\**\*.*" target="include" />
-    <file src="tools\**\*.*" target="tools" />
     <file src="win32\**\*.*" target="win32" />
   </files>
 </package>
